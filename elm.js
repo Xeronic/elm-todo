@@ -9037,17 +9037,11 @@ var _user$project$Main$decodeToken = A2(
 	_elm_lang$core$Json_Decode$at,
 	{
 		ctor: '::',
-		_0: 'data',
-		_1: {
-			ctor: '::',
-			_0: 'image_url',
-			_1: {ctor: '[]'}
-		}
+		_0: 'auth_token',
+		_1: {ctor: '[]'}
 	},
 	_elm_lang$core$Json_Decode$string);
-var _user$project$Main$loginRequest = function () {
-	var password = 'nisse123';
-	var email = 'jerry.ck.pedersen@gmail.com';
+var _user$project$Main$postLogin = function (model) {
 	var body = _elm_lang$http$Http$jsonBody(
 		_elm_lang$core$Json_Encode$object(
 			{
@@ -9055,23 +9049,38 @@ var _user$project$Main$loginRequest = function () {
 				_0: {
 					ctor: '_Tuple2',
 					_0: 'email',
-					_1: _elm_lang$core$Json_Encode$string(email)
+					_1: _elm_lang$core$Json_Encode$string(model.email)
 				},
 				_1: {
 					ctor: '::',
 					_0: {
 						ctor: '_Tuple2',
 						_0: 'password',
-						_1: _elm_lang$core$Json_Encode$string(password)
+						_1: _elm_lang$core$Json_Encode$string(model.password)
 					},
 					_1: {ctor: '[]'}
 				}
 			}));
 	var url = 'http://localhost:3000/auth/login/';
 	return A3(_elm_lang$http$Http$post, url, body, _user$project$Main$decodeToken);
-}();
+};
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$Main$Model = F4(
+	function (a, b, c, d) {
+		return {authToken: a, email: b, password: c, loginError: d};
+	});
+var _user$project$Main$init = {
+	ctor: '_Tuple2',
+	_0: A4(_user$project$Main$Model, _elm_lang$core$Maybe$Nothing, '', '', _elm_lang$core$Maybe$Nothing),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Main$UpdatePassword = function (a) {
+	return {ctor: 'UpdatePassword', _0: a};
+};
+var _user$project$Main$UpdateEmail = function (a) {
+	return {ctor: 'UpdateEmail', _0: a};
 };
 var _user$project$Main$LoadTokenData = function (a) {
 	return {ctor: 'LoadTokenData', _0: a};
@@ -9079,22 +9088,77 @@ var _user$project$Main$LoadTokenData = function (a) {
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'Click') {
-			return {
-				ctor: '_Tuple2',
-				_0: model,
-				_1: A2(_elm_lang$http$Http$send, _user$project$Main$LoadTokenData, _user$project$Main$loginRequest)
-			};
-		} else {
-			if (_p0._0.ctor === 'Ok') {
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			} else {
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			}
+		switch (_p0.ctor) {
+			case 'Click':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: A2(
+						_elm_lang$http$Http$send,
+						_user$project$Main$LoadTokenData,
+						_user$project$Main$postLogin(model))
+				};
+			case 'LoadTokenData':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								authToken: _elm_lang$core$Maybe$Just(_p0._0._0)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								loginError: _elm_lang$core$Maybe$Just('Incorrect username or password.')
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			case 'UpdateEmail':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{email: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{password: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Main$Click = {ctor: 'Click'};
 var _user$project$Main$view = function (model) {
+	var errorText = function () {
+		var _p1 = model.loginError;
+		if (_p1.ctor === 'Just') {
+			return A2(
+				_elm_lang$html$Html$p,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('alert alert-danger'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(_p1._0),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return _elm_lang$html$Html$text('');
+		}
+	}();
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -9113,40 +9177,7 @@ var _user$project$Main$view = function (model) {
 				},
 				{
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('form-group'),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$label,
-								{ctor: '[]'},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Username'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$input,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$type_('text'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$class('form-control'),
-											_1: {ctor: '[]'}
-										}
-									},
-									{ctor: '[]'}),
-								_1: {ctor: '[]'}
-							}
-						}),
+					_0: errorText,
 					_1: {
 						ctor: '::',
 						_0: A2(
@@ -9163,7 +9194,7 @@ var _user$project$Main$view = function (model) {
 									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Password'),
+										_0: _elm_lang$html$Html$text('Username'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
@@ -9172,11 +9203,15 @@ var _user$project$Main$view = function (model) {
 										_elm_lang$html$Html$input,
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$type_('password'),
+											_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$UpdateEmail),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$class('form-control'),
-												_1: {ctor: '[]'}
+												_0: _elm_lang$html$Html_Attributes$type_('text'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$class('form-control'),
+													_1: {ctor: '[]'}
+												}
 											}
 										},
 										{ctor: '[]'}),
@@ -9186,22 +9221,63 @@ var _user$project$Main$view = function (model) {
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$button,
+								_elm_lang$html$Html$div,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Click),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('btn btn-primary float-right'),
-										_1: {ctor: '[]'}
-									}
+									_0: _elm_lang$html$Html_Attributes$class('form-group'),
+									_1: {ctor: '[]'}
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Login'),
-									_1: {ctor: '[]'}
+									_0: A2(
+										_elm_lang$html$Html$label,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Password'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$input,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$UpdatePassword),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$type_('password'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$class('form-control'),
+														_1: {ctor: '[]'}
+													}
+												}
+											},
+											{ctor: '[]'}),
+										_1: {ctor: '[]'}
+									}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Click),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('btn btn-primary float-right'),
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Login'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
 				}),
@@ -9209,12 +9285,7 @@ var _user$project$Main$view = function (model) {
 		});
 };
 var _user$project$Main$main = _elm_lang$html$Html$program(
-	{
-		init: {ctor: '_Tuple2', _0: 1, _1: _elm_lang$core$Platform_Cmd$none},
-		view: _user$project$Main$view,
-		update: _user$project$Main$update,
-		subscriptions: _user$project$Main$subscriptions
-	})();
+	{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
