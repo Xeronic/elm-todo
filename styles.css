@@ -1,17 +1,26 @@
 body {
   margin: 0;
-  padding: 0;
+  padding: 0px 0 0 0;
   box-sizing: border-box;
+  font-family: "Gabriel Weiss' Friends Font";
 }
 
-.container {
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 100vh;
+  width: 100vw;
 }
 
-.container .login-form {
+.login-container .login-form {
   width: 50%;
+}
+
+.container {
+  padding: 40px 20px 0 20px;
+}
+
+.navbar-brand span {
+  padding: 0 4px;
 }
