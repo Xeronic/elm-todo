@@ -6,7 +6,6 @@ import Html.Events exposing (..)
 import Models.TodoList exposing (..)
 import Models.Model exposing (..)
 import Route exposing (..)
-import Views.Navbar
 
 
 view : Model -> Html Msg
@@ -17,8 +16,9 @@ view model =
                 [ div [ class "col" ]
                     [ Html.form []
                         [ div [ class "input-group mb-3" ]
-                            [ input [ class "form-control", placeholder "Name of your todo list" ] []
-                            , div [ class "input-group-append" ] [ button [ class "btn btn-outline-secondary" ] [ text "Create todo list" ] ]
+                            [ input [ onInput InputNewTodoList, class "form-control", placeholder "Name of your todo list" ] []
+                            , div [ class "input-group-append" ]
+                                [ button [ onClick AddTodoList, class "btn btn-outline-secondary" ] [ text "Create todo list" ] ]
                             ]
                         ]
                     ]

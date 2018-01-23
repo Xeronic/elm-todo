@@ -45,7 +45,7 @@ navbarView model =
         , div [ class "collapse navbar-collapse", classList [ ( "show", model.navbarToggle ) ] ]
             [ ul [ class "navbar-nav mr-auto mt-2 mt-lg-0" ]
                 [ li [ class "nav-item active" ]
-                    [ a [ class "nav-link", href "#" ] [ text "Home" ]
+                    [ a [ onClick UpdateTodoLists, class "nav-link", href "#" ] [ text "Home" ]
                     ]
                 , li [ class "navbar-nav mr-auto mt-2 mt-lg-0" ]
                     [ a [ class "nav-link", href "#" ] [ text "Central Perk" ]

@@ -15,3 +15,16 @@ getTodoLists token decoder =
         , timeout = Nothing
         , withCredentials = False
         }
+
+
+addTodoList : String -> String -> Http.Request String
+addTodoList token name =
+    Http.request
+        { method = "POST"
+        , headers = [ Http.header "Authorization" token ]
+        , url = "http://localhost:3000/todos"
+        , body = Http.stringBody "title" name
+        , expect = Http.expectString
+        , timeout = Nothing
+        , withCredentials = False
+        }

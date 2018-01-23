@@ -38,6 +38,7 @@ init flags =
         ( { route = config.route
           , authToken = flags.authToken
           , email = ""
+          , newTodoName = ""
           , password = ""
           , loginError = Nothing
           , todoLists = []

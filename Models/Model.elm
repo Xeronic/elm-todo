@@ -13,6 +13,7 @@ type alias Model =
     , loginError : Maybe String
     , todoLists : List TodoList
     , navbarToggle : Bool
+    , newTodoName : String
     , accountMenu : Bool
     }
 
@@ -27,6 +28,10 @@ type Msg
     | Logout
     | ToggleNavbar
     | ToggleAccountMenu
+    | InputNewTodoList String
+    | AddTodoList
+    | AddTodoListDone (Result Http.Error String)
+    | UpdateTodoLists
 
 
 type TestMsg
